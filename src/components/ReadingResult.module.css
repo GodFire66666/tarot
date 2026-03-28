@@ -1,0 +1,168 @@
+.results {
+  width: 100%;
+  max-width: 900px;
+  animation: fadeIn var(--fade-in-duration) ease-out;
+}
+
+.title {
+  font-family: var(--font-heading);
+  font-size: 1.5rem;
+  color: var(--gold);
+  text-align: center;
+  margin-bottom: 28px;
+  letter-spacing: 0.15em;
+}
+
+/* 标题上下装饰线 */
+.title::before,
+.title::after {
+  content: '';
+  display: block;
+  width: 80px;
+  height: 1px;
+  margin: 12px auto;
+  background: linear-gradient(90deg, transparent, var(--gold), transparent);
+  opacity: 0.4;
+}
+
+.title::before {
+  margin-bottom: 16px;
+}
+
+.cardResults {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+/* ===== 单张解读卡片 ===== */
+.resultCard {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: 16px;
+  padding: 28px;
+  animation: fadeInUp var(--fade-in-duration) ease-out both;
+  position: relative;
+  overflow: hidden;
+}
+
+/* 顶部金色装饰线 */
+.resultCard::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 10%;
+  right: 10%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--gold), transparent);
+  opacity: 0.3;
+}
+
+.resultHeader {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+}
+
+.position {
+  font-family: var(--font-heading);
+  font-size: 0.8rem;
+  color: var(--bg-primary);
+  background: var(--gold);
+  padding: 3px 12px;
+  border-radius: 20px;
+  letter-spacing: 0.08em;
+  font-weight: 600;
+}
+
+.cardName {
+  font-family: var(--font-heading);
+  font-size: 1.2rem;
+  color: var(--gold);
+  flex: 1;
+}
+
+.cardNameEn {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  font-weight: 400;
+}
+
+.orientation {
+  font-size: 0.8rem;
+  padding: 3px 10px;
+  border-radius: 20px;
+  border: 1px solid var(--gold);
+  color: var(--gold);
+  letter-spacing: 0.05em;
+}
+
+.orientationReversed {
+  border-color: var(--accent-purple);
+  color: var(--accent-purple);
+}
+
+/* ===== 关键词 ===== */
+.keywords {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 16px;
+}
+
+.keyword {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  background: rgba(107, 79, 160, 0.15);
+  padding: 4px 12px;
+  border-radius: 20px;
+  letter-spacing: 0.03em;
+  transition: background 0.3s, color 0.3s;
+}
+
+.keyword:hover {
+  background: rgba(201, 168, 76, 0.15);
+  color: var(--gold-light);
+}
+
+/* ===== 解读文字 ===== */
+.interpretation {
+  font-size: 1rem;
+  color: var(--text-primary);
+  line-height: 1.8;
+  text-align: justify;
+}
+
+/* ===== 动画 ===== */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* ===== 响应式 ===== */
+@media (max-width: 540px) {
+  .resultCard {
+    padding: 20px 16px;
+  }
+
+  .resultHeader {
+    gap: 8px;
+  }
+
+  .cardName {
+    font-size: 1rem;
+  }
+}

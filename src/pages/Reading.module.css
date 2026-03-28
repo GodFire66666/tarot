@@ -1,0 +1,101 @@
+.reading {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 40px 24px 60px;
+  gap: 40px;
+}
+
+/* ===== 头部 ===== */
+.header {
+  text-align: center;
+  animation: fadeInUp 0.6s ease-out;
+}
+
+.title {
+  font-family: var(--font-heading);
+  font-size: clamp(1.5rem, 4vw, 2rem);
+  color: var(--gold);
+  letter-spacing: 0.1em;
+  margin-bottom: 12px;
+}
+
+.question {
+  font-size: 1.1rem;
+  color: var(--text-primary);
+  margin-bottom: 8px;
+  font-style: italic;
+}
+
+.hint {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  letter-spacing: 0.05em;
+  animation: breathe 3s ease-in-out infinite;
+}
+
+@keyframes breathe {
+  0%, 100% { opacity: 0.5; }
+  50% { opacity: 1; }
+}
+
+/* ===== 底部按钮 ===== */
+.footer {
+  margin-top: auto;
+  padding-top: 20px;
+}
+
+.restartBtn {
+  font-family: var(--font-heading);
+  font-size: 1rem;
+  color: var(--gold);
+  background: transparent;
+  border: 1px solid var(--gold);
+  border-radius: 8px;
+  padding: 12px 36px;
+  letter-spacing: 0.1em;
+  position: relative;
+  overflow: hidden;
+  transition: background 0.35s, color 0.35s, box-shadow 0.35s, border-color 0.35s;
+}
+
+/* shimmer 光条 */
+.restartBtn::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 50%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(201, 168, 76, 0.15), transparent);
+  transition: none;
+  animation: btnShimmer 3s ease-in-out infinite;
+}
+
+@keyframes btnShimmer {
+  0%, 100% { left: -100%; }
+  50% { left: 150%; }
+}
+
+.restartBtn:hover {
+  background: var(--gold);
+  color: var(--bg-primary);
+  box-shadow: 0 4px 24px rgba(201, 168, 76, 0.35), 0 0 60px rgba(201, 168, 76, 0.1);
+}
+
+.restartBtn:hover::after {
+  animation: none;
+  opacity: 0;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
