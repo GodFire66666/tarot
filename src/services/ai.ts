@@ -1,9 +1,15 @@
 import type { DrawnCard } from '../types/tarot';
 
 const isDev = import.meta.env.DEV;
-// 开发环境走 Vite proxy（美团内网 Anthropic 格式），生产环境走 Vercel serverless（豆包 OpenAI 格式）
-const API_URL = isDev ? '/api/ai/v1/messages' : '/api/ai';
+
+// 开发环境走 Vite proxy（美团内网 Anthropic），生产环境前端直连豆包 API（支持 CORS）
+const DEV_API_URL = '/api/ai/v1/messages';
+const PROD_API_URL = 'https://ark.cn-beijing.volces.com/api/v3/chat/completions';
+const API_URL = isDev ? DEV_API_URL : PROD_API_URL;
+
 const DEV_API_KEY = '2027336794220036113';
+const PROD_API_KEY = 'a814c6e6-3bfd-4d04-bca6-fa1e68afdafc';
+
 const DEV_MODEL = 'aws.claude-opus-4.6';
 const PROD_MODEL = 'doubao-seed-2-0-pro-260215';
 const MODEL = isDev ? DEV_MODEL : PROD_MODEL;
@@ -45,10 +51,9 @@ export interface StreamCallbacks {
   onError: (error: Error) => void;
 }
 
-/** 构造请求 body — 开发环境 Anthropic 格式，生产环境 OpenAI 格式 */
+/** 构造请求 body */
 function buildRequestBody(userMessage: string) {
   if (isDev) {
-    // Anthropic Messages API
     return {
       model: MODEL,
       max_tokens: 1024,
@@ -57,7 +62,6 @@ function buildRequestBody(userMessage: string) {
       messages: [{ role: 'user', content: userMessage }],
     };
   }
-  // OpenAI Chat Completions API（豆包兼容）
   return {
     model: MODEL,
     max_tokens: 1024,
@@ -78,40 +82,29 @@ function buildHeaders(): Record<string, string> {
       'anthropic-version': '2023-06-01',
     };
   }
-  // 生产环境不需要带认证，由 Vercel serverless function 代理
   return {
     'Content-Type': 'application/json',
+    'Authorization': `Bearer ${PROD_API_KEY}`,
   };
 }
 
-/** 解析 Anthropic SSE 数据行 */
-function parseAnthropicLine(
-  data: string,
-  callbacks: StreamCallbacks,
-): boolean {
+/** 解析 Anthropic SSE */
+function parseAnthropicLine(data: string, callbacks: StreamCallbacks): boolean {
   try {
     const parsed = JSON.parse(data);
-    if (
-      parsed.type === 'content_block_delta' &&
-      parsed.delta?.type === 'text_delta'
-    ) {
+    if (parsed.type === 'content_block_delta' && parsed.delta?.type === 'text_delta') {
       callbacks.onChunk(parsed.delta.text);
     }
     if (parsed.type === 'message_stop') {
       callbacks.onDone();
-      return true; // 结束
+      return true;
     }
-  } catch {
-    // 非 JSON，跳过
-  }
+  } catch { /* skip */ }
   return false;
 }
 
-/** 解析 OpenAI SSE 数据行 */
-function parseOpenAILine(
-  data: string,
-  callbacks: StreamCallbacks,
-): boolean {
+/** 解析 OpenAI SSE */
+function parseOpenAILine(data: string, callbacks: StreamCallbacks): boolean {
   if (data === '[DONE]') {
     callbacks.onDone();
     return true;
@@ -126,9 +119,7 @@ function parseOpenAILine(
       callbacks.onDone();
       return true;
     }
-  } catch {
-    // 非 JSON，跳过
-  }
+  } catch { /* skip */ }
   return false;
 }
 
